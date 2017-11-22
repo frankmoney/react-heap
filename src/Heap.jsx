@@ -48,6 +48,10 @@ export default class Heap extends React.Component {
     }
 
     componentWillMount() {
+      if (!canUseDOM) {
+        return
+      }
+
       const {appId, userId, userData} = this.props
       if (!window.heap && appId) {
         injectScript(appId)
