@@ -1,0 +1,38 @@
+{
+  "name": "react-heap",
+  "version": "0.1.0",
+  "description": "React component for Heap analytics platform",
+  "main": "lib/Heap.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "babel --presets es2015,react,stage-0 -d lib/ src/",
+    "prepublish": "npm run compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ndelitski/react-heap.git"
+  },
+  "keywords": [
+    "react",
+    "heap",
+    "analytics"
+  ],
+  "author": "Nick Delitski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ndelitski/react-heap/issues"
+  },
+  "homepage": "https://github.com/ndelitski/react-heap#readme",
+  "dependencies": {
+    "prop-types": "15.5.8"
+  },
+  "peerDependencies": {
+    "react": "^15.x"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.2.0",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-react": "^6.1.18",
+    "babel-preset-stage-0": "^6.1.18"
+  }
+}
