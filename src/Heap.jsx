@@ -14,6 +14,28 @@ export const HeapAPI = (...args) => {
   }
 }
 
+const injectScript = (appId) => {
+  if (!canUseDOM) {
+    return
+  }
+
+  (function (window, document, appId) {
+    window.heap = window.heap || [], heap.load = function (e, t) {
+      window.heap.appid = e, window.heap.config = t = t || {};
+      var r = t.forceSSL || "https:" === document.location.protocol, a = document.createElement("script");
+      a.type = "text/javascript", a.async = !0, a.src = (r ? "https:" : "http:") + "//cdn.heapanalytics.com/js/heap-" + e + ".js";
+      var n = document.getElementsByTagName("script")[0];
+      n.parentNode.insertBefore(a, n);
+      for (var o = function (e) {
+        return function () {
+          heap.push([e].concat(Array.prototype.slice.call(arguments, 0)))
+        }
+      }, p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"], c = 0; c < p.length; c++) heap[p[c]] = o(p[c])
+    };
+    heap.load(appId);
+  })(window, document, appId)
+}
+
 export default class Heap extends React.Component {
     static propTypes = {
         appId: PropTypes.string.isRequired,
@@ -21,44 +43,23 @@ export default class Heap extends React.Component {
         userData: PropTypes.shape({}),
     }
 
-    constructor(props) {
-      super(props)
-
-      const {appId, userId, userData, ...otherProps} = props
-      if (!appId || !canUseDOM) {
-        return
-      }
-
-      if (!window.heap) {
-        (function (window, document, appId) {
-          window.heap = window.heap || [], heap.load = function (e, t) {
-            window.heap.appid = e, window.heap.config = t = t || {};
-            var r = t.forceSSL || "https:" === document.location.protocol, a = document.createElement("script");
-            a.type = "text/javascript", a.async = !0, a.src = (r ? "https:" : "http:") + "//cdn.heapanalytics.com/js/heap-" + e + ".js";
-            var n = document.getElementsByTagName("script")[0];
-            n.parentNode.insertBefore(a, n);
-            for (var o = function (e) {
-              return function () {
-                heap.push([e].concat(Array.prototype.slice.call(arguments, 0)))
-              }
-            }, p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"], c = 0; c < p.length; c++) heap[p[c]] = o(p[c])
-          };
-          heap.load(appId);
-        })(window, document, appId)
-      }
-
-      if (window.heap) {
-        if (userId) {
-          window.heap.identify(userId)
-        }
-        if (userData) {
-          window.heap.addUserProperties(userData)
-        }
-      }
-    }
-
     shouldComponentUpdate() {
       return false;
+    }
+
+    componentWillMount() {
+      const {appId, userId, userData} = this.props
+      if (!window.heap && appId) {
+        injectScript(appId)
+        if (window.heap) {
+          if (userId) {
+            window.heap.identify(userId)
+          }
+          if (userData) {
+            window.heap.addUserProperties(userData)
+          }
+        }
+      }
     }
 
     componentWillReceiveProps(nextProps) {
