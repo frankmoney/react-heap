@@ -47,7 +47,7 @@ export default class Heap extends React.Component {
       return false;
     }
 
-    componentWillMount() {
+    componentDidMount() {
       if (!canUseDOM) {
         return
       }
